@@ -1,7 +1,3 @@
-ifeq ($(strip $(DEVKITPRO)),)
-$(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>devkitPro")
-endif
-
 export TOPDIR	:=	$(CURDIR)
 
 export DSWIFI_MAJOR	:= 0
@@ -30,6 +26,7 @@ include/dswifi_version.h : Makefile
 #-------------------------------------------------------------------------------
 release: lib
 #-------------------------------------------------------------------------------
+	echo $(LIBNDS)
 	$(MAKE) -C arm9 BUILD=release
 	$(MAKE) -C arm7 BUILD=release
 
@@ -49,23 +46,4 @@ clean:
 #-------------------------------------------------------------------------------
 	@$(MAKE) -C arm9 clean
 	@$(MAKE) -C arm7 clean
-	@$(RM) -r dswifi-src-*.tar.bz2 dswifi-*.tar.bz2 include/dswifi_version.h lib
-
-#-------------------------------------------------------------------------------
-dist-src:
-#-------------------------------------------------------------------------------
-	@tar --exclude=*CVS* --exclude=.svn -cjf dswifi-src-$(VERSION).tar.bz2 arm7/source arm7/Makefile arm9/source arm9/Makefile common include Makefile dswifi_license.txt
-
-#-------------------------------------------------------------------------------
-dist-bin: all
-#-------------------------------------------------------------------------------
-	@tar --exclude=*CVS* --exclude=.svn -cjf dswifi-$(VERSION).tar.bz2 include lib dswifi_license.txt
-
-dist: dist-bin dist-src
-
-#-------------------------------------------------------------------------------
-install: dist-bin
-#-------------------------------------------------------------------------------
-	mkdir -p $(DESTDIR)$(DEVKITPRO)/libnds
-	bzip2 -cd dswifi-$(VERSION).tar.bz2 | tar -x -C $(DESTDIR)$(DEVKITPRO)/libnds
 
