@@ -20,7 +20,7 @@ PREFIX		:=	arm-none-eabi-
 
 export CC	:=	$(PREFIX)gcc
 export CXX	:=	$(PREFIX)g++
-export AR	:=	ar
+export AR	:=	$(PREFIX)gcc-ar
 export OBJCOPY	:=	$(PREFIX)objcopy
 export STRIP	:=	$(PREFIX)strip
 
@@ -69,7 +69,7 @@ endif
 #---------------------------------------------------------------------------------
 	$(SILENTMSG) AR.7 $(notdir $@)
 	@rm -f $@
-	$(SILENTCMD)$(AR) -rcs $@ $^
+	$(SILENTCMD)$(AR) -rc $@ $^
 
 #---------------------------------------------------------------------------------
 %.arm.o: CFLAGS    += -marm
@@ -89,7 +89,7 @@ endif
 
 #---------------------------------------------------------------------------------
 %.o: %.cpp
-	$(SILENTMSG) CC.9 $(notdir $<)
+	$(SILENTMSG) CC.7 $(notdir $<)
 	$(ADD_COMPILE_COMMAND) add $(CXX) "$(CPPFLAGS) $(CXXFLAGS) -c $< -o $@" $<
 	$(SILENTCMD)$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@ $(ERROR_FILTER)
 
@@ -104,10 +104,6 @@ endif
 	$(SILENTMSG) AS.7 $(notdir $<)
 	$(ADD_COMPILE_COMMAND) add $(CC) "-x assembler-with-cpp $(CPPFLAGS) $(ASFLAGS) -c $< -o $@" $<
 	$(SILENTCMD)$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d -x assembler-with-cpp $(CPPFLAGS) $(ASFLAGS) -c $< -o $@ $(ERROR_FILTER)
-
-ifneq ($(strip $(NITRO_FILES)),)
-_ADDFILES	:=	-d $(NITRO_FILES)
-endif
 
 #---------------------------------------------------------------------------------
 %.arm7: %.elf
@@ -164,7 +160,6 @@ endif
 
 
 LIBS	:=
-#-lnds7
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
